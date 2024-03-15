@@ -1,0 +1,17 @@
+ingress:
+  enabled: true
+  hostname: jenkins.dew.org
+  ingressClassName: nginx
+
+configAsCode:
+  autoReload:
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 0
+      runAsNonRoot: false
+      readOnlyRootFilesystem: false
+
+containerSecurityContext:
+  enabled: true
+  runAsUser: 0
+  runAsNonRoot: false

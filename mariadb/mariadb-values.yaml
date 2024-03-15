@@ -1,0 +1,48 @@
+auth:
+  rootPassword: "root123"
+  database: wdemo
+  username: "dew"
+  password: "dew123"
+
+initdbScripts:
+  dew_init_script.sh: |
+    #!/bin/bash
+    echo "dew_init_script."
+  dew_init_script.sql: |
+    CREATE DATABASE IF NOT EXISTS `wdemo` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+    USE `wdemo`;
+    
+    CREATE TABLE IF NOT EXISTS `ana_regioni` (
+      `ID_REGIONE` varchar(3) NOT NULL,
+      `DESCRIZIONE` varchar(255) NOT NULL,
+      PRIMARY KEY (`ID_REGIONE`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    
+    /*!40000 ALTER TABLE `ana_regioni` DISABLE KEYS */;
+    INSERT INTO `ana_regioni` (`ID_REGIONE`, `DESCRIZIONE`) VALUES
+        ('000', '-'),
+        ('010', 'PIEMONTE'),
+        ('020', 'VALLE D\'AOSTA'),
+        ('030', 'LOMBARDIA'),
+        ('041', 'PROVINCIA AUT. BOLZANO'),
+        ('042', 'PROVINCIA AUT. TRENTO'),
+        ('050', 'VENETO'),
+        ('060', 'FRIULI VENEZIA GIULIA'),
+        ('070', 'LIGURIA'),
+        ('080', 'EMILIA ROMAGNA'),
+        ('090', 'TOSCANA'),
+        ('100', 'UMBRIA'),
+        ('110', 'MARCHE'),
+        ('120', 'LAZIO'),
+        ('130', 'ABRUZZO'),
+        ('140', 'MOLISE'),
+        ('150', 'CAMPANIA'),
+        ('160', 'PUGLIA'),
+        ('170', 'BASILICATA'),
+        ('180', 'CALABRIA'),
+        ('190', 'SICILIA'),
+        ('200', 'SARDEGNA'),
+        ('777', 'NON DISPONIBILE'),
+        ('900', 'ESTERO'),
+        ('999', 'REGIONE DI STATO ESTERO NON DISPON.');
+    /*!40000 ALTER TABLE `ana_regioni` ENABLE KEYS */;

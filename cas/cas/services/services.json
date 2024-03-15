@@ -1,0 +1,10 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "^(http|https)://([A-Za-z0-9_-]+\\.)dew\\.org/.*",
+  "name": "DewService",
+  "id": 1000,
+  "description": "Service for DewService",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

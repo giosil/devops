@@ -1,0 +1,149 @@
+openapi: 3.0.3
+info:
+  title: WDemo RESTful
+  description: WDemo RESTful Services
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://wdemo-be-service:8080/wdemo-be/rpc
+paths:
+  /CONTACTS.list:
+    get:
+      summary: list contacts
+      description: list contacts
+      operationId: CONTACTS.list
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+        '500':
+          description: Internal Error
+  /CONTACTS.find:
+    get:
+      summary: find contacts
+      description: find contacts
+      operationId: CONTACTS.find
+      parameters:
+        - name: name
+          in: query
+          description: Contact name that need to be considered for filter
+          required: false
+          explode: false
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: Contact email that need to be considered for filter
+          required: false
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+        '500':
+          description: Internal Error
+  /CONTACTS.clear:
+    get:
+      summary: clear contacts
+      description: clear contacts
+      operationId: CONTACTS.clear
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '500':
+          description: Internal Error
+  /CONTACTS.init:
+    get:
+      summary: init application
+      description: init application
+      operationId: CONTACTS.init
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+        '500':
+          description: Internal Error
+  /CONTACTS.add:
+    post:
+      summary: add a contact
+      description: add a contact
+      operationId: CONTACTS.add
+      requestBody:
+        description: Contact to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '500':
+          description: Internal Error
+  /CONTACTS.remove:
+    delete:
+      summary: remove a contact
+      description: remove a contact
+      operationId: CONTACTS.remove
+      parameters:
+        - name: name
+          in: query
+          description: Contact name that need to be considered for filter
+          required: false
+          explode: false
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: Contact email that need to be considered for filter
+          required: false
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+        '500':
+          description: Internal Error
+components:
+  schemas:
+    Contact:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Contact name
+        email:
+          type: string
+          description: Contact email

@@ -1,0 +1,86 @@
+openapi: 3.0.3
+info:
+  title: WDemo JSON-RPC
+  description: WDemo JSON-RPC Service
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://wdemo-be-service:8080/wdemo-be
+paths:
+  /rpc:
+    post:
+      summary: JSON-RPC Service
+      description: RPC Request
+      operationId: rpc
+      requestBody:
+        description: RPC Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RPCRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RPCResponse'
+        '500':
+          description: Internal Error
+components:
+  schemas:
+    RPCRequest:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          description: Protocol version
+          example: "2.0"
+          enum:
+            - "2.0"
+        id:
+          type: integer
+          description: Call Id
+          format: int32
+        method:
+          type: string
+          description: Method
+        params:
+          type: array
+          description: Parameters
+          items:
+            type: object
+    RPCResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          description: Protocol version
+          example: "2.0"
+          enum:
+            - "2.0"
+        id:
+          type: integer
+          description: Call Id
+          format: int32
+        result:
+          type: object
+          description: Result
+        error:
+          $ref: '#/components/schemas/RPCError'
+    RPCError:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error code
+          format: int32
+        data:
+          type: string
+          description: Error data
+        message:
+          type: string
+          description: Error message
