@@ -8,7 +8,7 @@ Here you will find some tools and configuration examples for setting up a devops
 
 The examples refer to the `wdemo` project present in the repository `https://github.com/giosil/multi-rpc`.
 
-## Usual procedure for release
+## Usual procedure to deploy a release
 
 Suppose we start from this situation:
 
@@ -21,12 +21,14 @@ Suppose we start from this situation:
 * sviluppo
 ```
 
-Proceed with the merges on the other branches:
+Proceed with the merge `sviluppo` -> `master`:
 
 - `git checkout master`
 - `git merge sviluppo`
 - `git commit -m "update"`
 - `git push --set-upstream origin master`
+
+Proceed with the merge `sviluppo` -> `collaudo`:
 
 - `git checkout collaudo`
 - `git merge sviluppo`
@@ -37,7 +39,7 @@ Return to the development branch:
 
 - `git checkout sviluppo`
 
-Proceed with the creation of the merge request `collaudo` -> `produzione`.
+Proceed with the creation of the merge request `collaudo` -> `produzione` (protected branch).
 
 ## Contributors
 
