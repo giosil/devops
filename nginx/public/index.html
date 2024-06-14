@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="it">
+	<head>
+		<title>Test nginx</title>
+	</head>
+	<body>
+		<h1>Test nginx</h1>
+		<hr>
+		<div id="view-root"></div>
+
+		<script src="dist/app.js"></script>
+		<script>
+			let main = new APP.Main('Hello world!');
+			main.render('view-root');
+		</script>
+	</body>
+</html>
