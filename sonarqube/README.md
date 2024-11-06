@@ -26,7 +26,7 @@ passowrd: admin
 
 First generate a `User token` from:
 
-`http://localhost:9000/account/security`
+`http://sonarqube.dew.org/account/security`
 
 In `$HOME/.m2/settings.xml` add:
 
@@ -45,7 +45,7 @@ In `$HOME/.m2/settings.xml` add:
       </activation>
       <properties>
         <sonar.host.url>
-          http://localhost:9000
+          http://sonarqube.dew.org
         </sonar.host.url>
         <sonar.login>
           <!-- generated user token -->
