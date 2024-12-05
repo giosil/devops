@@ -2,9 +2,9 @@
 
 ## Install SonarQube with Docker
 
-`docker pull sonarqube:9.9.2-community`
+`docker pull sonarqube:9.9.7-community`
 
-`docker run --name sonarqube -p 9000:9000 -d sonarqube:9.9.2-community`
+`docker run --name sonarqube -p 9000:9000 -d sonarqube:9.9.7-community`
 
 ## Install SonarQube with Kubernetes
 
@@ -74,7 +74,7 @@ To check test coverage, configure the maven plugin `jacoco` as below:
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.8</version>
+        <version>0.8.12</version>
         <executions>
           <execution>
             <goals>
