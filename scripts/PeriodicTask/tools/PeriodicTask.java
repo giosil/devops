@@ -7,8 +7,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class PeriodicTask {
-	public static final String PWSH = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";
-
 	public static void main(String[] args) {
 		if(args == null || args.length < 2) {
 			System.out.println("Usage PeriodicTask period_in_minutes path_script_pwsh");
@@ -39,13 +37,25 @@ public class PeriodicTask {
 		
 		Runnable task = () -> {
 			try {
-				log("Execute " + file.getAbsolutePath() + "...");
-				ProcessBuilder processBuilder = new ProcessBuilder("powershell.exe", "-File", file.getAbsolutePath());
+				ProcessBuilder processBuilder = null;
+				String script = file.getAbsolutePath();
+				if(script.endsWith(".ps1")) {
+					log("powershell.exe -File " + file.getAbsolutePath() + "...");
+					processBuilder = new ProcessBuilder("powershell.exe", "-File", script);
+				}
+				else if(script.endsWith(".exe")) {
+					log(script + "...");
+					processBuilder = new ProcessBuilder(script);
+				}
+				else {
+					log("cmd.exe /C start " + file.getAbsolutePath() + "...");
+					processBuilder = new ProcessBuilder("cmd.exe", "/C", "start", script);
+				}
 				Process process = processBuilder.start();
 				int exitCode = process.waitFor();
 				log("exitCode: " + exitCode);
-				
-			} catch (Exception e) {
+			} 
+			catch (Exception e) {
 				log("Exception: " + e.getMessage());
 				e.printStackTrace();
 			}

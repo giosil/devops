@@ -1,51 +1,121 @@
-$log_file = "C:\tools\DockerDesktopRestart.log"
-Remove-Item -Path $log_file -Force -ErrorAction SilentlyContinue
+# Globals
 
-function _log($msg) {
+$global:tool_root = $PSScriptRoot
+$global:tool_name = $MyInvocation.MyCommand.Name
+$global:tool_logf = "${global:tool_root}\${global:tool_name}.log"
+$global:tool_chkf = "${global:tool_root}\${global:tool_name}_Check.log"
+$global:tool_regf = "${global:tool_root}\${global:tool_name}_Registry.log"
+$global:tool_arg0 = $args[0];
+
+# Functions
+
+function Tool-Init {
+    if ([string]::IsNullOrEmpty($global:tool_root)) {
+        $global:tool_root = "C:\tools";
+    }
+    if ([string]::IsNullOrEmpty($global:tool_name)) {
+        $global:tool_name = "Tool";
+    }
+    $global:tool_logf = "${global:tool_root}\${global:tool_name}.log"
+    $global:tool_chkf = "${global:tool_root}\${global:tool_name}_Check.log"
+    $global:tool_regf = "${global:tool_root}\${global:tool_name}_Registry.log"
+}
+
+function Tool-Sleep {
+    Tool-Log "Sleep 10 seconds..."
+    Start-Sleep -Seconds 10
+}
+
+function Tool-Sleep-Period {
+    Tool-Log "Sleep 10 minutes..."
+    Start-Sleep -Seconds (10 * 60)
+}
+
+function Tool-Delete-Log {
+    Remove-Item -Path $global:tool_logf -Force -ErrorAction SilentlyContinue
+}
+
+function Tool-Log {
+    param (
+        [string] $message
+    )
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    Add-Content -Path $log_file -Value "$timestamp - $msg"
-    Write-Output "$timestamp - $msg"
+    Add-Content -Path $global:tool_logf -Value "${timestamp} - ${message}"
+    Write-Host "${timestamp} - ${message}"
 }
 
-docker ps > "C:\tools\DockerPs.log"
-if ($LASTEXITCODE -eq 0) {
-    _log "Docker ps ha restituito $LASTEXITCODE"
-    Exit
-} 
-else {
-    _log "Docker ps ha restituito $LASTEXITCODE"
+function Tool-Registry {
+    param (
+        [string] $message
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    Add-Content -Path $global:tool_regf -Value "${timestamp} - ${message}"
 }
 
-_log "Stop-Process Docker Desktop..."
-Stop-Process -Name "Docker Desktop" -Force -ErrorAction SilentlyContinue
+function Tool-Stop-Docker {
+    Tool-Log "Stop Docker..."
+    Stop-Process -Name "Docker Desktop" -Force -ErrorAction SilentlyContinue
 
-_log "Wait 10 seconds..."
-Start-Sleep -Seconds 10
+    Tool-Sleep
 
-_log "Stop other docker processes..."
+    Tool-Log "Stop other Docker processes..."
+    Stop-Process -Name "com.docker.backend" -Force -ErrorAction SilentlyContinue
+    Stop-Process -Name "com.docker.build" -Force -ErrorAction SilentlyContinue
+    Stop-Process -Name "com.docker.dev-envs" -Force -ErrorAction SilentlyContinue
 
-Stop-Process -Name "com.docker.backend" -Force -ErrorAction SilentlyContinue
-Stop-Process -Name "com.docker.build" -Force -ErrorAction SilentlyContinue
-Stop-Process -Name "com.docker.dev-envs" -Force -ErrorAction SilentlyContinue
+    Tool-Sleep
 
-_log "Wait 10 seconds..."
-Start-Sleep -Seconds 10
+    Tool-Log "Clean Docker logs..."
+    Remove-Item -Path "C:\Users\silvestris.admin\AppData\Local\Docker\log\host\*" -Force
+    Remove-Item -Path "C:\Users\silvestris.admin\AppData\Local\Docker\log\vm\**" -Force
 
-_log "Remove docker log files..."
-Remove-Item -Path "C:\Users\silvestris.admin\AppData\Local\Docker\log\host\*" -Force
-Remove-Item -Path "C:\Users\silvestris.admin\AppData\Local\Docker\log\vm\**" -Force
-
-_log "WSL shutdown..."
-try {
-    wsl --shutdown
+    Tool-Log "WSL shutdown..."
+    try {
+        wsl --shutdown
+    }
+    catch {
+        Tool-Log "Exception: $($_.Exception.Message)"
+    }
 }
-catch {
-    _log "Errore: $($_.Exception.Message)"
+
+function Tool-Start-Docker {
+    Tool-Log "Start Docker..."
+    Start-Process -FilePath "C:\Program Files\Docker\Docker\Docker Desktop.exe"
 }
 
-_log "Start-Process Docker Desktop..."
-Start-Process -FilePath "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+# Procedure
 
-_log "Task completed..."
+Tool-Init
 
-(Get-Date) >> "C:\tools\DockerDesktopRestart_History.log"
+while($true) {
+    
+    Tool-Delete-Log
+
+    docker ps > $global:tool_chkf
+
+    if ($LASTEXITCODE -eq 0) {
+        Tool-Log "Check exit code: $LASTEXITCODE"
+
+        if ($global:tool_arg0 -eq 'force') {
+
+            Tool-Log "Force restart..."
+
+            Tool-Stop-Docker
+
+            Tool-Start-Docker
+
+            Tool-Registry "Docker restarted (forced)"
+        }
+    } 
+    else {
+        Tool-Log "Check exit code: $LASTEXITCODE"
+
+        Tool-Stop-Docker
+
+        Tool-Start-Docker
+
+        Tool-Registry "Docker restarted"
+    }
+    
+    Tool-Sleep-Period
+}
