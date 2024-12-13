@@ -53,12 +53,13 @@ function Tool-Registry {
 }
 
 function Tool-Stop-Docker {
-    Tool-Log "Stop Docker..."
+    # Tool-Log "Shutdown Docker..."
+    # Start-Process -FilePath "C:\Program Files\Docker\Docker\DockerCli.exe" -ArgumentList "-Shutdown"
+
+    Tool-Log "Stop Docker Desktop process..."
     Stop-Process -Name "Docker Desktop" -Force -ErrorAction SilentlyContinue
 
-    Tool-Sleep
-
-    Tool-Log "Stop other Docker processes..."
+    Tool-Log "Stop com.docker processes..."
     Stop-Process -Name "com.docker.backend" -Force -ErrorAction SilentlyContinue
     Stop-Process -Name "com.docker.build" -Force -ErrorAction SilentlyContinue
     Stop-Process -Name "com.docker.dev-envs" -Force -ErrorAction SilentlyContinue
@@ -66,8 +67,8 @@ function Tool-Stop-Docker {
     Tool-Sleep
 
     Tool-Log "Clean Docker logs..."
-    Remove-Item -Path "C:\Users\silvestris.admin\AppData\Local\Docker\log\host\*" -Force
-    Remove-Item -Path "C:\Users\silvestris.admin\AppData\Local\Docker\log\vm\**" -Force
+    Remove-Item -Path "$HOME\AppData\Local\Docker\log\host\*" -Force
+    Remove-Item -Path "$HOME\AppData\Local\Docker\log\vm\**" -Force
 
     Tool-Log "WSL shutdown..."
     try {
