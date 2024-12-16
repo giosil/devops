@@ -5,16 +5,23 @@ $global:tool_name = $MyInvocation.MyCommand.Name
 $global:tool_logf = "${global:tool_root}\${global:tool_name}.log"
 $global:tool_chkf = "${global:tool_root}\${global:tool_name}_Check.log"
 $global:tool_regf = "${global:tool_root}\${global:tool_name}_Registry.log"
-$global:tool_arg0 = $args[0];
+$global:tool_peri = 5
+$global:tool_arg0 = $args[0]
 
 # Functions
 
 function Tool-Init {
     if ([string]::IsNullOrEmpty($global:tool_root)) {
-        $global:tool_root = "C:\tools";
+        $global:tool_root = "C:\tools"
     }
     if ([string]::IsNullOrEmpty($global:tool_name)) {
-        $global:tool_name = "Tool";
+        $global:tool_name = "Tool"
+    }
+    if ([int]::TryParse($global:tool_arg0, [ref]$global:tool_peri)) {
+        Write-Host "Setted period: $global:tool_peri"
+    }
+    else {
+        $global:tool_peri = 5
     }
     $global:tool_logf = "${global:tool_root}\${global:tool_name}.log"
     $global:tool_chkf = "${global:tool_root}\${global:tool_name}_Check.log"
@@ -22,13 +29,13 @@ function Tool-Init {
 }
 
 function Tool-Sleep {
-    Tool-Log "Sleep 10 seconds..."
-    Start-Sleep -Seconds 10
+    Tool-Log "Sleep 5 seconds..."
+    Start-Sleep -Seconds 5
 }
 
 function Tool-Sleep-Period {
-    Tool-Log "Sleep 10 minutes..."
-    Start-Sleep -Seconds (10 * 60)
+    Tool-Log "Sleep $global:tool_peri minutes..."
+    Start-Sleep -Seconds ($global:tool_peri * 60)
 }
 
 function Tool-Delete-Log {
@@ -106,6 +113,8 @@ while($true) {
             Tool-Start-Docker
 
             Tool-Registry "Docker restarted (forced)"
+
+            exit 0
         }
     } 
     else {
