@@ -99,7 +99,11 @@ while($true) {
     
     Tool-Delete-Log
 
-    docker ps > $global:tool_chkf
+    # In some cases this command hangs.
+    # docker ps > $global:tool_chkf
+
+    # It is preferable to check kubernetes (with timeout)
+    kubectl cluster-info > $global:tool_chkf
 
     if ($LASTEXITCODE -eq 0) {
         Tool-Log "Check exit code: $LASTEXITCODE"
@@ -126,6 +130,6 @@ while($true) {
 
         Tool-Registry "Docker restarted"
     }
-    
+
     Tool-Sleep-Period
 }
