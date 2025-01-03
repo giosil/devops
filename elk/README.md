@@ -1,214 +1,100 @@
-# WDemo - Installation of Elastic Stack ELK: Elasticsearch, Logstash and Kibana.
+# Install Elasticsearch and Kibana using Helm
 
-## Install Elasticsearch
+## Install custom resource definitions
 
-`helm install elasticsearch-dew bitnami/elasticsearch`
+`kubectl create -f https://download.elastic.co/downloads/eck/2.16.0/crds.yaml`
 
-Wait a few minutes and check installation:
+## Install ECK operator
 
-`helm status elasticsearch-dew`
+`kubectl apply -f https://download.elastic.co/downloads/eck/2.16.0/operator.yaml`
 
-`kubectl port-forward --namespace default svc/elasticsearch-dew 9200:9200`
+## Add elastic Helm repository
 
-`wget http://localhost:9200`
+`helm repo add elastic https://helm.elastic.co`
 
-`wget http://localhost:9200/_cat/indices?v=true&s=index`
+`helm repo update`
 
-`wget http://localhost:9200/_cat/indices?format=json`
+## Check images version tag
 
-## Install Kibana
+`helm show values elastic/eck-stack`
 
-`helm install kibana-dew bitnami/kibana --set elasticsearch.hosts[0]=elasticsearch-dew.default.svc.cluster.local,elasticsearch.port=9200`
+`helm template es-kb-quickstart elastic/eck-stack`
 
-Wait a few minutes and check installation:
+Es. 8.17.0
 
-`helm status kibana-dew`
+## Pull images
 
-`kubectl port-forward --namespace default svc/kibana-dew 8080:5601`
+`docker pull docker.elastic.co/elasticsearch/elasticsearch:8.17.0`
 
-`wget http://localhost:8080`
+`docker pull docker.elastic.co/kibana/kibana:8.17.0`
 
-## Install Filebeat on wdemo-be POD based on tomcat
+`docker pull docker.elastic.co/beats/filebeat:8.17.0`
 
-Install tools:
+## Install Elasticsearch and Kibana
 
-`yum -y install curl`
+`helm install es-kb-quickstart elastic/eck-stack -n elastic-stack --create-namespace`
 
-`yum -y install tar`
+with kibana Ingress enabled:
 
-`yum -y install gzip`
+`helm install es-kb-quickstart elastic/eck-stack -n elastic-stack --create-namespace --set=eck-kibana.ingress.enabled=true --set=eck-kibana.ingress.class=nginx --set=eck-kibana.ingress.hosts[0].host=kibana.dew.org --set=eck-kibana.ingress.hosts[0].path="/"`
 
-`yum -y install vim` - To install vi
+## Get password of 'elastic' user
 
-Optional tools:
+`kubectl get secret elasticsearch-es-elastic-user -o json -n elastic-stack`
 
-`yum -y install procps` - To install ps
+`kubectl get secret elasticsearch-es-elastic-user -o go-template='{{.data.elastic | base64decode}}' -n elastic-stack`
 
-`yum install coreutils` - To install utils (base64)
+eKBMm094QUvW1v5Cc5pL5976
 
-Proceed with the installation:
+Copy value to put in ConfigMap filebeat-config of `filebeat.yaml`
 
-`cd /root`
+## Get certificate
 
-`curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.10.4-linux-x86_64.tar.gz`
+`kubectl get secret elasticsearch-es-http-certs-public -o json -n elastic-stack`
 
-`tar xzvf filebeat-8.10.4-linux-x86_64.tar.gz`
+`kubectl get secret elasticsearch-es-http-certs-public -o yaml -n elastic-stack`
 
-`cd filebeat-8.10.4-linux-x86_64/`
+Copy `tls.crt` to put in Secret filebeat-es-certs of `filebeat.yaml`
 
-`vi filebeat.yml`
+## Check services
 
-```yaml
-filebeat.inputs:
+`kubectl get service -n elastic-stack`
 
-#...
-# wdemo-be logs: /root/log/*.log
-# tomcat   logs: /usr/local/tomcat/logs/*.log
-  paths:
-    - /usr/local/tomcat/logs/*.log
-#...
+`kubectl get service elasticsearch-es-http -n elastic-stack`
 
-#...
-setup.kibana:
-  host: "kibana-dew.default.svc.cluster.local:5601"
-#...
+From other namespaces of the same cluster host is <service-name>.<namespace>:
 
-#...
-output.elasticsearch:
-  # Array of hosts to connect to.
-  hosts: ["elasticsearch-dew.default.svc.cluster.local:9200"]
-#...
-```
+elasticsearch-es-http.elastic-stack
 
-`./filebeat modules enable tomcat`
+`kubectl port-forward service/elasticsearch-es-http 9200 -n elastic-stack`
 
-`vi modules.d/tomcat.yml`
+https://localhost:9200
 
-```yaml
-#...
-- module: tomcat
-  log:
-    enabled: true
-#...
-```
+https://localhost:9200/_cat/indices?v=true&s=index
 
-`./filebeat -e`
+https://localhost:9200/_cat/indices?format=json
 
-## Install Metricbeat on wdemo-be POD
+`kubectl get service es-kb-quickstart-eck-kibana-kb-http -n elastic-stack`
 
-Proceed with the installation:
+`kubectl port-forward service/es-kb-quickstart-eck-kibana-kb-http 5601 -n elastic-stack`
 
-`cd /root`
+https://localhost:5601
 
-`curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-8.10.4-linux-x86_64.tar.gz`
+## Install filebeat
 
-`tar xzvf metricbeat-8.10.4-linux-x86_64.tar.gz`
+First modify filebeat.yaml with generate credential, certificate.
 
-`cd metricbeat-8.10.4-linux-x86_64/`
+`kubectl apply -f .\filebeat.yaml`
 
-`vi metricbeat.yml`
+`kubectl delete -f .\filebeat.yaml --grace-period=0 --force`
 
-```yaml
-#...
-setup.kibana:
-  host: "kibana-dew.default.svc.cluster.local:5601"
-#...
+Check indexes starts with .ds-filebeat:
 
-#...
-output.elasticsearch:
-  # Array of hosts to connect to.
-  hosts: ["elasticsearch-dew.default.svc.cluster.local:9200"]
-#...
-```
+https://localhost:9200/_cat/indices?v=true&s=index
 
-`./metricbeat modules enable system`
-
-`vi modules.d/system.yml`
-
-`./metricbeat -e`
+https://localhost:9200/.ds-filebeat-8.17.0-2025.01.03-000001/_search
 
 ## View log on kibana
 
 ![00](elk_00.png)
 
-## Install Logstash
-
-Check file `logstash-values.yaml`
-
-```yaml
-extraEnvVars:
-  - name: ELASTICSEARCH_HOST
-    value: "elasticsearch-dew.default.svc.cluster.local"
-
-input: |-
-  http { port => 8080 }
-  beats { port => 5044 }
-
-output: |-
-  elasticsearch {
-    hosts => ["http://elasticsearch-dew.default.svc.cluster.local:9200"]
-    index => "%{[@metadata][beat]}-%{[@metadata][version]}"
-    action => "create"
-  }
-
-containerPorts:
-  - name: http
-    containerPort: 8080
-    protocol: TCP
-  - name: monitoring
-    containerPort: 9600
-    protocol: TCP
-  - name: beats
-    containerPort: 5044
-    protocol: TCP
-
-service:
-  ports:
-    - name: http
-      port: 8080
-      targetPort: http
-      protocol: TCP
-    - name: beats
-      port: 5044
-      targetPort: beats
-      protocol: TCP
-```
-
-`helm install logstash-dew -f logstash-values.yaml bitnami/logstash`
-
-Wait a few minutes and check installation:
-
-`helm status logstash-dew`
-
-Stop filebeat process and modify config:
-
-`vi filebeat.yml`
-
-```yaml
-#...
-# Comment output.elasticsearch and hosts
-#output.elasticsearch:
-  # Array of hosts to connect to.
-  #hosts: ["elasticsearch-dew.default.svc.cluster.local:9200"]
-#...
-
-#...
-output.logstash:
-  # The Logstash hosts
-  hosts: ["logstash-dew.default.svc.cluster.local:5044"]
-#...
-```
-
-`./filebeat -e`
-
-## Uninstall
-
-`helm uninstall logstash-dew`
-
-`helm uninstall kibana-dew`
-
-`helm uninstall elasticsearch-dew`
-
-## Contributors
-
-* [Giorgio Silvestris](https://github.com/giosil)
