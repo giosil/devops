@@ -99,7 +99,7 @@ Create private key and certificate:
 
 Create Secret tls:
 
-`kubectl create secret tls webapp-dew-org-tls-secret --cert=tls.crt --key=tls.key`
+`kubectl create secret tls wdemo-dew-org-tls-secret --cert=tls.crt --key=tls.key`
 
 or
 
@@ -107,7 +107,7 @@ or
 apiVersion: v1
 kind: Secret
 metadata:
-  name: webapp-dew-org-tls-secret
+  name: wdemo-dew-org-tls-secret
 type: kubernetes.io/tls
 data:
   tls.crt: <CERTIFICATO_BASE64>
@@ -116,30 +116,30 @@ data:
 
 Create Ingress:
 
-`kubectl apply -f ingress.yaml`
+`kubectl apply -f wdemo-dew-org-ingress.yaml`
 
-ingress.yaml:
+wdemo-dew-org-ingress.yaml:
 
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: webapp-dew-org-ingress
+  name: wdemo-dew-org-ingress
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - webapp.dew.org
-      secretName: webapp-dew-org-tls-secret
+        - wdemo.dew.org
+      secretName: wdemo-dew-org-tls-secret
   rules:
-    - host: webapp.dew.org
+    - host: wdemo.dew.org
       http:
         paths:
           - path: /
             pathType: ImplementationSpecific
             backend:
               service:
-                name: webapp-dew-org-service
+                name: wdemo-dew-org-service
                 port:
                   number: 8080
 ```
