@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: esempio-cronjob
+spec:
+  schedule: "0 5 * * *" # Esegue ogni giorno alle 5:00
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: esempio-cronjob
+        spec:
+          containers:
+          - name: esempio-cronjob-container
+            image: busybox
+            command: ["echo", "Esecuzione del CronJob!"]
+          restartPolicy: OnFailure

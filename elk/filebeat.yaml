@@ -11,7 +11,7 @@ data:
       id: app-log-collector
       paths:
         - /var/log/app/app.log
-
+    
     output.elasticsearch:
       hosts: ["elasticsearch-es-http.elastic-stack:9200"]
       username: "elastic"

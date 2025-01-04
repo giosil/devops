@@ -38,6 +38,35 @@ with kibana Ingress enabled:
 
 `helm install es-kb-quickstart elastic/eck-stack -n elastic-stack --create-namespace --set=eck-kibana.ingress.enabled=true --set=eck-kibana.ingress.class=nginx --set=eck-kibana.ingress.hosts[0].host=kibana.dew.org --set=eck-kibana.ingress.hosts[0].path="/"`
 
+or create a separate Ingress:
+
+`kubectl apply -f kibana_ingress.yaml -n elastic-stack`
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kibana-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: kibana.dew.org
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: es-kb-quickstart-eck-kibana-kb-http.elastic-stack
+            port:
+              number: 5601
+```
+
 ## Get password of 'elastic' user
 
 `kubectl get secret elasticsearch-es-elastic-user -o json -n elastic-stack`

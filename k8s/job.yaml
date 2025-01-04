@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: esempio-job
+spec:
+  template:
+    metadata:
+      labels:
+        app: esempio-job
+    spec:
+      containers:
+      - name: esempio-job-container
+        image: busybox
+        command: ["echo", "Esecuzione completata!"]
+      restartPolicy: Never
+  backoffLimit: 4
