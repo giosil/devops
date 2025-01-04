@@ -91,6 +91,59 @@ Install ingress nginx controller:
 
 See https://github.com/kubernetes/ingress-nginx for more information.
 
+## Create Ingress https
+
+Create private key and certificate:
+
+`openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout tls.key -out tls.crt`
+
+Create Secret tls:
+
+`kubectl create secret tls webapp-dew-org-tls-secret --cert=tls.crt --key=tls.key`
+
+or
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: webapp-dew-org-tls-secret
+type: kubernetes.io/tls
+data:
+  tls.crt: <CERTIFICATO_BASE64>
+  tls.key: <CHIAVE_BASE64>
+```
+
+Create Ingress:
+
+`kubectl apply -f ingress.yaml`
+
+ingress.yaml:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webapp-dew-org-ingress
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - webapp.dew.org
+      secretName: webapp-dew-org-tls-secret
+  rules:
+    - host: webapp.dew.org
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: webapp-dew-org-service
+                port:
+                  number: 8080
+```
+
 ## REST API Kubernetes
 
 `kubectl proxy --port=8080` - Start API proxy on local port 8080
