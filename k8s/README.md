@@ -2,7 +2,9 @@
 
 To create kubernetes objects:
 
-- `kubectl apply -f manifest.yaml` - Create pod by manifest
+- `kubectl apply -f manifest.yaml` - Create objects by manifest
+- `kubectl apply -f manifest.yaml --dry-run=client` - Check manifest
+- `kubectl apply -f manifest.yaml --dry-run=server` - Check manifest in cluster
 
 To manage pod:
 
