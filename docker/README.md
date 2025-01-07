@@ -131,3 +131,25 @@ Open PowerShell and run this command to set WSL 2 as the default version when in
 Install your Linux distribution of choice
 
 Open the Microsoft Store and select your favorite Linux distribution.
+
+## Optimize Virtual hard disks on Windows 10 (Hyper-V)
+
+- Shutdown Docker Desktop
+- `Optimize-VHD -Path "C:\Users\Public\Documents\Hyper-V\Virtual hard disks\DockerDesktop.vhdx" -Mode Full`
+- Start Docker Desktop
+
+## Optimize Virtual hard disks on Windows 10 (WSL 2 based engine)
+
+- Shutdown Docker Desktop
+- wsl --shutdown
+- diskpart
+	- select vdisk file="C:\Users\giorgio.silvestris\AppData\Local\Docker\wsl\disk\docker_data.vhdx"
+	- attach vdisk readonly
+	- compact vdisk
+	- detach vdisk
+	- exit
+- Start Docker Desktop
+- \\\\wsl$           (to view data)
+- \\\\wsl.localhost  (alterative path)
+- \\\\wsl.localhost\docker-desktop\mnt\docker-desktop-disk\data\docker\containers
+- \\\\wsl.localhost\docker-desktop\mnt\docker-desktop-disk\data\docker\volumes

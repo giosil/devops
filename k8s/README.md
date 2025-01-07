@@ -205,28 +205,6 @@ Other commands:
 - `helm upgrade wxdsb ./wxdsb-0.1.0.tgz` - this upgrade `wxdsb` application from package
 - `helm upgrade -i wxdsb ./wxdsb-0.1.0.tgz` - this upgrade `wxdsb` application with `-i` (install if name doesn't exist)
 
-### Optimize Virtual hard disks on Windows 10 (Hyper-V)
-
-- Shutdown Docker Desktop
-- `Optimize-VHD -Path "C:\Users\Public\Documents\Hyper-V\Virtual hard disks\DockerDesktop.vhdx" -Mode Full`
-- Start Docker Desktop
-
-### Optimize Virtual hard disks on Windows 10 (WSL 2 based engine)
-
-- Shutdown Docker Desktop
-- wsl --shutdown
-- diskpart
-	- select vdisk file="C:\Users\giorgio.silvestris\AppData\Local\Docker\wsl\data\ext4.vhdx"
-	- attach vdisk readonly
-	- compact vdisk
-	- detach vdisk
-	- exit
-- Start Docker Desktop
-- \\\\wsl$           (to view data)
-- \\\\wsl.localhost  (alterative path)
-- \\\\wsl.localhost\docker-desktop\mnt\docker-desktop-disk\data\docker\containers
-- \\\\wsl.localhost\docker-desktop\mnt\docker-desktop-disk\data\docker\volumes
-
 ## Kubernetes Dashboard
 
 Add kubernetes-dashboard repository:
