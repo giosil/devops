@@ -103,3 +103,31 @@ Stop container:
 Stop and remove container (and network):
 
 `docker compose down`
+
+## Install WSL on Windows
+
+You must first enable the "Windows Subsystem for Linux" optional feature before installing any Linux distributions on Windows.
+
+Execute Deployment Image Servicing and Management (dism.exe):
+
+`dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart`
+
+Before installing WSL 2, you must enable the Virtual Machine Platform optional feature.
+
+`dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart`
+
+The Linux kernel update package installs the most recent version of the WSL 2 Linux kernel
+
+`wsl.exe --install` 
+
+or 
+
+`wsl.exe --update`
+
+Open PowerShell and run this command to set WSL 2 as the default version when installing a new Linux distribution:
+
+`wsl --set-default-version 2`
+
+Install your Linux distribution of choice
+
+Open the Microsoft Store and select your favorite Linux distribution.
