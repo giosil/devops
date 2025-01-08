@@ -205,6 +205,10 @@ Other commands:
 - `helm upgrade wxdsb ./wxdsb-0.1.0.tgz` - this upgrade `wxdsb` application from package
 - `helm upgrade -i wxdsb ./wxdsb-0.1.0.tgz` - this upgrade `wxdsb` application with `-i` (install if name doesn't exist)
 
+Get ReplicaSet without Pods:
+
+`kubectl get rs -o jsonpath='{.items[?(@.status.replicas==0)].metadata.name}'`
+
 ## Kubernetes Dashboard
 
 Add kubernetes-dashboard repository:
@@ -288,3 +292,15 @@ http {
 To generate self signed certificates:
 
 `openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout nginx-selfsigned.key -out nginx-selfsigned.crt`
+
+From Docker using Alpine:
+
+`docker run -it --rm --name alpine alpine:latest sh`
+
+or
+
+`kubectl run alpine --rm -it --image=alpine:latest --restart=Never -- sh`
+
+Install openssl
+
+`# apk add --no-cache openssl`
