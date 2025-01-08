@@ -1,3 +1,5 @@
+Write-Host "Delete old ReplicaSets..."
+
 $list_rs = @(kubectl get rs -o jsonpath='{.items[?(@.status.replicas==0)].metadata.name}')
 
 $array_rs = $list_rs -split ' '

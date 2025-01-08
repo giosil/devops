@@ -1,3 +1,5 @@
+Write-Host "Delete old Secrets..."
+
 $list_sc = @(kubectl get secrets -o jsonpath='{range .items[*]}{@.metadata.name}#{@.type} {end}')
 
 $array_sc = $list_sc -split ' '

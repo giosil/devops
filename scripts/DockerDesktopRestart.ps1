@@ -132,4 +132,28 @@ while($true) {
     }
 
     Tool-Sleep-Period
+
+    $HH = (Get-Date).Hour
+
+    $MM = (Get-Date).Minute
+
+    $HHMM = $HH * 100 + $MM
+
+    if ($HHMM -ge 230 -and $HHMM -lt 235) {
+
+        Tool-Log "Extra maintenance actions at $HHMM..."
+
+        $ActScript = Join-Path -Path $PSScriptRoot -ChildPath "DeleteOldReplicaSets.ps1"
+
+        Tool-Log "Execute $ActScript..."
+
+        . $ActScript
+
+        $ActScript = Join-Path -Path $PSScriptRoot -ChildPath "DeleteOldSecrets.ps1"
+
+        Tool-Log "Execute $ActScript..."
+
+        . $ActScript
+
+    }
 }
