@@ -84,9 +84,6 @@ spec:
   - name: samples-volume
     configMap:
       name: filebeat-samples
-      items:
-        - key: sample.log
-          path: sample.log
   - name: logs-volume
     emptyDir: {}
 ---
