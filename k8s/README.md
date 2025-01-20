@@ -360,3 +360,43 @@ users:
     client-certificate-data: <BASE64_USER_CERT>
     client-key-data: <BASE64_USER_KEY>
 ```
+
+## Access to Kubernetes cluster in pods
+
+The `default` ServiceAccount is associated with each namespace and its token and credentials are automatically mounted in pods where no other ServiceAccount is specified. 
+
+This token is typically found in this path:
+
+`/var/run/secrets/kubernetes.io/serviceaccount`
+
+To test:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kubectl-pod
+  namespace: default
+spec:
+  containers:
+    - name: kubectl-container
+      image: bitnami/kubectl:latest
+      command:
+        - "sleep"
+        - "infinity"
+```
+
+First, you need to assign a role to the `default` ServiceAccount to perform the desired operations.
+
+`kubectl create clusterrolebinding default-admin-binding --clusterrole=admin --serviceaccount=default:default`
+
+or 
+
+`kubectl apply -f ./rbac_default.yaml`
+
+Exectute shell:
+
+`kubectl exec -it kubectl-pod -- /bin/sh`
+
+`kubectl get pods`
+
