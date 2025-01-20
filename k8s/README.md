@@ -378,6 +378,7 @@ metadata:
   name: kubectl-pod
   namespace: default
 spec:
+  terminationGracePeriodSeconds: 3
   containers:
     - name: kubectl-container
       image: bitnami/kubectl:latest
