@@ -313,7 +313,7 @@ Let `gsilvestris` be the user and `prova` the project (groupname).
 
 `openssl genrsa -out gsilvestris.key 4096`
 
-`openssl req -new -key gsilvestris.key -nodes -out gsilvestris.csr -subj "/CN=gsilvestris/O=prova"
+`openssl req -new -key gsilvestris.key -nodes -out gsilvestris.csr -subj "/CN=gsilvestris/O=prova"`
 
 ### Create CSR in Kubernetes
 
