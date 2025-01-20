@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: kibana-ingress
-  namespace: elastic-stack
+  namespace: default
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
@@ -18,5 +18,6 @@ spec:
         backend:
           service:
             name: es-kb-quickstart-eck-kibana-kb-http
+            namespace: elastic-stack
             port:
               number: 5601

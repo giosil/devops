@@ -304,3 +304,59 @@ or
 Install openssl
 
 `# apk add --no-cache openssl`
+
+## To enable access to Kubernetes (onboarding)
+
+Let `gsilvestris` be the user and `prova` the project (groupname).
+
+### Generate CSR
+
+`openssl genrsa -out gsilvestris.key 4096`
+
+`openssl req -new -key gsilvestris.key -nodes -out gsilvestris.csr -subj "/CN=gsilvestris/O=prova"
+
+### Create CSR in Kubernetes
+
+```yaml
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+    name: gsilvestris-csr
+spec:
+    request: <BASE64_USER_CSR>
+    signerName: kubernetes.io/kube-apiserver-client
+    usages:
+    - client auth
+```
+
+### Approve CSR
+
+`kubectl certificate approve gsilvestris-csr`
+
+### Get certificate
+
+`kubectl get csr gsilvestris-csr -o jsonpath='{.status.certificate}'`
+
+### Create config
+
+```yaml
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: <BASE64_CA_CERT>
+    server: https://kubernetes.docker.internal:6443
+  name: docker-desktop
+contexts:
+- context:
+    cluster: docker-desktop
+    user: docker-desktop
+  name: docker-desktop
+current-context: docker-desktop
+kind: Config
+preferences: {}
+users:
+- name: gsilvestris
+  user:
+    client-certificate-data: <BASE64_USER_CERT>
+    client-key-data: <BASE64_USER_KEY>
+```
