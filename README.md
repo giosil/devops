@@ -28,10 +28,10 @@ Proceed with the merge `sviluppo` -> `master`:
 - `git commit -m "update"`
 - `git push --set-upstream origin master`
 
-Proceed with the merge `sviluppo` -> `collaudo`:
+Proceed with the merge `master` -> `collaudo`:
 
 - `git checkout collaudo`
-- `git merge sviluppo`
+- `git merge master`
 - `git commit -m "update"`
 - `git push --set-upstream origin collaudo`
 
@@ -40,6 +40,8 @@ Return to the development branch:
 - `git checkout sviluppo`
 
 Proceed with the creation of the merge request `collaudo` -> `produzione` (protected branch).
+
+![00](git_branches.png)
 
 ## Contributors
 
