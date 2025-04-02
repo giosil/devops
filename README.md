@@ -25,14 +25,28 @@ Proceed with the merge `sviluppo` -> `master`:
 
 - `git checkout master`
 - `git merge sviluppo`
+
+If there are conflicts, resolve them and execute:
+
+- `git add .`
 - `git commit -m "update"`
+
+Otherwise execute:
+
 - `git push --set-upstream origin master`
 
 Proceed with the merge `master` -> `collaudo`:
 
 - `git checkout collaudo`
 - `git merge master`
+
+If there are conflicts, resolve them and execute:
+
+- `git add .`
 - `git commit -m "update"`
+
+Otherwise execute:
+
 - `git push --set-upstream origin collaudo`
 
 Return to the development branch:
