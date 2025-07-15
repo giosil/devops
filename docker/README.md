@@ -104,6 +104,20 @@ Stop and remove container (and network):
 
 `docker compose down`
 
+## Uninstall WSL on Windows
+
+To list distros:
+
+`wsl -l -v`
+
+To remove a distro:
+
+`wsl --unregister Ubuntu`
+
+To uninstall WSL:
+
+`wsl --uninstall`
+
 ## Install WSL on Windows
 
 You must first enable the "Windows Subsystem for Linux" optional feature before installing any Linux distributions on Windows.
