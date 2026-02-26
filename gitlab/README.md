@@ -56,6 +56,10 @@ Run as service:
 
 `gitlab-runner start`
 
+*Windows gitlab-runner notes*: check shell = "powershell" in config.toml file.
+
+*Gitlab configuration notes*: check "Run untagged jobs" in Settings | CI/CD | Runners (to expand) > Available specific runners.
+
 ## Contributors
 
 * [Giorgio Silvestris](https://github.com/giosil)

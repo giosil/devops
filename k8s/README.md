@@ -89,7 +89,7 @@ First check current context:
 
 Install ingress nginx controller:
 
-- `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.3/deploy/static/provider/cloud/deploy.yaml`
+- `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.3/deploy/static/provider/cloud/deploy.yaml`
 
 See https://github.com/kubernetes/ingress-nginx for more information.
 
@@ -210,6 +210,10 @@ Get ReplicaSet without Pods:
 `kubectl get rs -o jsonpath='{.items[?(@.status.replicas==0)].metadata.name}'`
 
 ## Kubernetes Dashboard
+
+**Retired**. See:
+
+https://github.com/kubernetes-retired/dashboard
 
 Add kubernetes-dashboard repository:
 
