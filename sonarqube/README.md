@@ -2,9 +2,9 @@
 
 ## Install SonarQube with Docker
 
-`docker pull sonarqube:9.9.8-community`
+`docker pull sonarqube:community`
 
-`docker run --name sonarqube -p 9000:9000 -d sonarqube:9.9.8-community`
+`docker run --name sonarqube -p 9000:9000 -d sonarqube:community`
 
 ## Install SonarQube with Kubernetes
 
