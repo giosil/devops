@@ -101,12 +101,17 @@ while($true) {
 
     # In some cases this command hangs.
     # docker ps > $global:tool_chkf
+	# if ($LASTEXITCODE -eq 0) {
 
     # It is preferable to check kubernetes (with timeout)
-    kubectl cluster-info > $global:tool_chkf
+    # kubectl cluster-info > $global:tool_chkf
+	# if ($LASTEXITCODE -eq 0) {
+	
+	# Alternatively, you can check the availability of a "sentinel" web application
+	$response = Invoke-WebRequest -Uri "http://demo.dew.org" -UseBasicParsing -TimeoutSec 10 -ErrorAction SilentlyContinue
 
-    if ($LASTEXITCODE -eq 0) {
-        Tool-Log "Check exit code: $LASTEXITCODE"
+    if ($response -ne $null -and $response.StatusCode -eq 200) {
+        Tool-Log "Check OK"
 
         if ($global:tool_arg0 -eq 'force') {
 
@@ -122,7 +127,7 @@ while($true) {
         }
     } 
     else {
-        Tool-Log "Check exit code: $LASTEXITCODE"
+        Tool-Log "Check failed"
 
         Tool-Stop-Docker
 
